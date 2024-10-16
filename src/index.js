@@ -56,3 +56,4 @@ const afficheFactures = (factures) => {
 
 const factures = await getFactures(db);
 afficheFactures(factures);
+// await deleteDoc(doc(db, "cities", "DC"));
