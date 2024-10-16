@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { doc, deleteDoc } from "firebase/firestore";
 
 console.log("Start du programme V1 !");
 
@@ -26,14 +27,32 @@ const getFactures = async (db) => {
   }));
   return factures;
 };
+const supprimerFacture = (factures) => {
+  const rootEl = document.querySelector("#root");
+  const buttonEl = document.createElement("button");
+  rootEl.appendChild(buttonEl);
+};
+const afficheFactures = (factures) => {
+  const rootEl = document.querySelector("#root");
+  const ulEl = document.createElement("ul");
+  factures.map((factures) => {
+    const liEl = document.createElement("li");
+    liEl.innerHTML +=
+      factures.id +
+      "<button class='deleteFacture' data-id='" +
+      factures.id +
+      "'>X</button>";
+    ulEl.appendChild(liEl);
+  });
+  const buttonDelete = document.querySelectorAll(".deleteFacture");
+  buttonDelete.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      console.log("click");
+      console.log(event.target.getAttribute("data-id"));
+    });
+  });
+  rootEl.appendChild(ulEl);
+};
 
 const factures = await getFactures(db);
-// console.log(factures);
-const ref = collection(db, "factures");
-
-factures.forEach((factures) => {
-  // console.log(typeof factures.totalTTC); afficher le type
-  if (isNaN(factures.totalTTC) && parseFloat(factures.totalTTC) > 10) {
-    console.log(factures.id);
-  }
-});
+afficheFactures(factures);
