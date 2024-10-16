@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
+
 import { doc, deleteDoc } from "firebase/firestore";
 
 console.log("Start du programme V1 !");
@@ -27,6 +28,7 @@ const getFactures = async (db) => {
   }));
   return factures;
 };
+const factures = await getFactures(db);
 const supprimerFacture = (factures) => {
   const rootEl = document.querySelector("#root");
   const buttonEl = document.createElement("button");
@@ -44,16 +46,16 @@ const afficheFactures = (factures) => {
       "'>X</button>";
     ulEl.appendChild(liEl);
   });
+
+  rootEl.appendChild(ulEl);
   const buttonDelete = document.querySelectorAll(".deleteFacture");
   buttonDelete.forEach((button) => {
-    button.addEventListener("click", (event) => {
+    button.addEventListener("click", async (event) => {
       console.log("click");
       console.log(event.target.getAttribute("data-id"));
+      await deleteDoc(doc(db, "factures", "data-id"));
     });
   });
-  rootEl.appendChild(ulEl);
 };
 
-const factures = await getFactures(db);
 afficheFactures(factures);
-// await deleteDoc(doc(db, "cities", "DC"));
