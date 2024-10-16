@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import "dotenv/config";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
 console.log("Start du programme V1 !");
@@ -33,7 +32,8 @@ const factures = await getFactures(db);
 const ref = collection(db, "factures");
 
 factures.forEach((factures) => {
-  if (factures.totalTTC) {
-    console.log(factures);
+  // console.log(typeof factures.totalTTC); afficher le type
+  if (isNaN(factures.totalTTC) && parseFloat(factures.totalTTC) > 10) {
+    console.log(factures.id);
   }
 });
