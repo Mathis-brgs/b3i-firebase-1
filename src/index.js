@@ -56,11 +56,22 @@ const afficheFactures = (factures) => {
 
   buttonDelete.forEach((button) => {
     button.addEventListener("click", async (event) => {
-      console.log("click");
-      console.log(event.target.getAttribute("data-id"));
-      await deleteDoc(
-        doc(db, "factures", event.target.getAttribute("data-id"))
-      );
+      if (confirm("Etes vosu sur de vouloir supprimer cette facture ,")) {
+        await deleteDoc(
+          doc(db, "factures", event.target.getAttribute("data-id"))
+        );
+      }
+    });
+  });
+  const buttonModif = document.querySelectorAll(".modifierFacture");
+  buttonModif.forEach((button) => {
+    button.addEventListener("click", async (event) => {
+      formEl.addEventListener("submit", async (event) => {
+        await setDoc(doc(db, "factures", "data-id", data), {
+          number: event.target[0].value,
+          totalTTC: event.target[1].value,
+        });
+      });
     });
   });
 };
