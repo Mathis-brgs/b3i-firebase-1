@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, addDoc, setDoc } from "firebase/firestore";
 
 console.log("Start du programme V1 !");
 
@@ -44,18 +44,35 @@ const afficheFactures = (factures) => {
       "<button class='deleteFacture' data-id='" +
       factures.id +
       "'>X</button>";
+    liEl.innerHTML +=
+      "<button class='modifierFacture' data-id='" +
+      factures.id +
+      "'>Modifier</button>";
     ulEl.appendChild(liEl);
   });
 
   rootEl.appendChild(ulEl);
   const buttonDelete = document.querySelectorAll(".deleteFacture");
+
   buttonDelete.forEach((button) => {
     button.addEventListener("click", async (event) => {
       console.log("click");
       console.log(event.target.getAttribute("data-id"));
-      await deleteDoc(doc(db, "factures", "data-id"));
+      await deleteDoc(
+        doc(db, "factures", event.target.getAttribute("data-id"))
+      );
     });
   });
 };
+
+const formEl = document.querySelector("#formAdd form");
+formEl.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  console.log("Submit add form", event.target[0].value, event.target[1].value);
+  const docRef = await addDoc(collection(db, "factures"), {
+    number: event.target[0].value,
+    totalTTC: event.target[1].value,
+  });
+});
 
 afficheFactures(factures);
