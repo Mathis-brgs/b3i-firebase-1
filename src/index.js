@@ -99,7 +99,7 @@ formEl.addEventListener("submit", async (event) => {
   });
   // document.getElementById("formAdd form").reset();
 });
-
+// refresh
 const q = query(collection(db, "factures"));
 onSnapshot(q, (snapshot) => {
   let factures = [];
