@@ -1,7 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 
-import { doc, deleteDoc, addDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  deleteDoc,
+  addDoc,
+  setDoc,
+  onSnapshot,
+  query,
+} from "firebase/firestore";
 
 console.log("Start du programme V1 !");
 
@@ -34,9 +41,13 @@ const supprimerFacture = (factures) => {
   const buttonEl = document.createElement("button");
   rootEl.appendChild(buttonEl);
 };
+
+// Add Factures id and button
 const afficheFactures = (factures) => {
   const rootEl = document.querySelector("#root");
+
   const ulEl = document.createElement("ul");
+
   factures.map((factures) => {
     const liEl = document.createElement("li");
     liEl.innerHTML +=
@@ -50,13 +61,14 @@ const afficheFactures = (factures) => {
       "'>Modifier</button>";
     ulEl.appendChild(liEl);
   });
-
+  rootEl.innerHTML = "";
   rootEl.appendChild(ulEl);
   const buttonDelete = document.querySelectorAll(".deleteFacture");
 
+  // Delete factures on button
   buttonDelete.forEach((button) => {
     button.addEventListener("click", async (event) => {
-      if (confirm("Etes vosu sur de vouloir supprimer cette facture ,")) {
+      if (confirm("Etes vous sur de vouloir supprimer cette facture ,")) {
         await deleteDoc(
           doc(db, "factures", event.target.getAttribute("data-id"))
         );
@@ -64,18 +76,19 @@ const afficheFactures = (factures) => {
     });
   });
   const buttonModif = document.querySelectorAll(".modifierFacture");
-  buttonModif.forEach((button) => {
-    button.addEventListener("click", async (event) => {
-      formEl.addEventListener("submit", async (event) => {
-        await setDoc(doc(db, "factures", "data-id", data), {
-          number: event.target[0].value,
-          totalTTC: event.target[1].value,
-        });
-      });
-    });
-  });
+  // buttonModif.forEach((button) => {
+  //   button.addEventListener("click", async (event) => {
+  //     formEl.addEventListener("submit", async (event) => {
+  //       await setDoc(doc(db, "factures", "data-id", data), {
+  //         number: event.target[0].value,
+  //         totalTTC: event.target[1].value,
+  //       });
+  //     });
+  //   });
+  // });
 };
 
+// Add factures in firebase
 const formEl = document.querySelector("#formAdd form");
 formEl.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -84,6 +97,14 @@ formEl.addEventListener("submit", async (event) => {
     number: event.target[0].value,
     totalTTC: event.target[1].value,
   });
+  // document.getElementById("formAdd form").reset();
 });
 
-afficheFactures(factures);
+const q = query(collection(db, "factures"));
+onSnapshot(q, (snapshot) => {
+  let factures = [];
+  snapshot.docs.forEach((doc) => {
+    factures.push({ ...doc.data(), id: doc.id });
+  });
+  afficheFactures(factures);
+});
